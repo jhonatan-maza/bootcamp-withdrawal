@@ -31,15 +31,15 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     public Mono<Withdrawal> findByNumber(String Number) {
         Mono<Withdrawal> withdrawalMono = withdrawalRepository
                 .findAll()
-                .filter(x -> x.getLoadBalanceNumber().equals(Number))
+                .filter(x -> x.getWithdrawalNumber().equals(Number))
                 .next();
         return withdrawalMono;
     }
 
     @Override
     public Mono<Withdrawal> saveWithdrawal(Withdrawal dataWithdrawal) {
-        Mono<Withdrawal> withdrawalMono = findByNumber(dataWithdrawal.getLoadBalanceNumber())
-                .flatMap(__ -> Mono.<Withdrawal>error(new Error("This Withdrawal  number " + dataWithdrawal.getLoadBalanceNumber() + "exists")))
+        Mono<Withdrawal> withdrawalMono = findByNumber(dataWithdrawal.getWithdrawalNumber())
+                .flatMap(__ -> Mono.<Withdrawal>error(new Error("This Withdrawal  number " + dataWithdrawal.getWithdrawalNumber() + "exists")))
                 .switchIfEmpty(withdrawalRepository.save(dataWithdrawal));
         return withdrawalMono;
 
@@ -49,7 +49,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     @Override
     public Mono<Withdrawal> updateWithdrawal(Withdrawal dataWithdrawal) {
 
-        Mono<Withdrawal> transactionMono = findByNumber(dataWithdrawal.getLoadBalanceNumber());
+        Mono<Withdrawal> transactionMono = findByNumber(dataWithdrawal.getWithdrawalNumber());
         try {
             dataWithdrawal.setDni(transactionMono.block().getDni());
             dataWithdrawal.setAmount(transactionMono.block().getAmount());
@@ -76,7 +76,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     public Flux<Withdrawal> findByCommission(String accountNumber) {
         Flux<Withdrawal> transactions = withdrawalRepository
                 .findAll()
-                .filter(x -> x.getCommission()>0);
+                .filter(x -> x.getCommission()>0 && x.getAccountNumber().equals(accountNumber));
         return transactions;
     }
 

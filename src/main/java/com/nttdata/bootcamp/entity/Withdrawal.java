@@ -26,7 +26,7 @@ public class Withdrawal {
     private String accountNumber;
     private String typeAccount;
 
-    private String loadBalanceNumber;
+    private String withdrawalNumber;
     private Double amount;
     private Double commission;
     private String status;

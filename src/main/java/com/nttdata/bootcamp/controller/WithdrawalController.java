@@ -79,7 +79,7 @@ public class WithdrawalController {
 											  @Valid @RequestBody Withdrawal dataWithdrawal) {
 		Mono.just(dataWithdrawal).doOnNext(t -> {
 
-					t.setLoadBalanceNumber(numberTransaction);
+					t.setWithdrawalNumber(numberTransaction);
 					t.setModificationDate(new Date());
 
 				}).onErrorReturn(dataWithdrawal).onErrorResume(e -> Mono.just(dataWithdrawal))
