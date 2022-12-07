@@ -15,4 +15,6 @@ public interface WithdrawalService {
     public Mono<Withdrawal> updateWithdrawal(Withdrawal withdrawal);
     public Mono<Void> deleteWithdrawal(String accountNumber);
 
+    public Flux<Withdrawal> findByCommission(String accountNumber);
+
 }

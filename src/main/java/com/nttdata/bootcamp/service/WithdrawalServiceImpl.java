@@ -72,6 +72,14 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         }
     }
 
+    @Override
+    public Flux<Withdrawal> findByCommission(String accountNumber) {
+        Flux<Withdrawal> transactions = withdrawalRepository
+                .findAll()
+                .filter(x -> x.getCommission()>0);
+        return transactions;
+    }
+
 
 
 

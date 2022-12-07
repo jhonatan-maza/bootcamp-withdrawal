@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Document(collection = "loadBalance")
+@Document(collection = "withdrawal")
 public class Withdrawal {
 
     @Id

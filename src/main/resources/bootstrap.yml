@@ -1,6 +1,6 @@
 spring:
   application:
-    name: bootcamp-transaction
+    name: bootcamp-withdrawal
   config:
     import: "optional:configserver:http://localhost:7000"
   cloud:

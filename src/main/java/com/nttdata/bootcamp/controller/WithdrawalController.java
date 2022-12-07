@@ -48,12 +48,22 @@ public class WithdrawalController {
 
 	//Save withdrawal
 	@CircuitBreaker(name = "withdrawal", fallbackMethod = "fallBackGetWithdrawal")
-	@PostMapping(value = "/saveWithdrawal")
-	public Mono<Withdrawal> saveWithdrawal(@RequestBody Withdrawal dataWithdrawal){
-		Mono.just(dataWithdrawal).doOnNext(t -> {
+	@PostMapping(value = "/saveWithdrawal/{commission}/{count}")
+	public Mono<Withdrawal> saveWithdrawal(@RequestBody Withdrawal dataWithdrawal,
+										   @PathVariable("commission") Double commission,
+										   @PathVariable("commission") Long count){
+		Mono<Long> countMovementsMono = getCountDeposits(dataWithdrawal.getAccountNumber());
+		Long countMovementS =countMovementsMono.block();
 
+		Mono.just(dataWithdrawal).doOnNext(t -> {
+					if(countMovementS>count)
+						t.setCommission(commission);
+					else
+						t.setCommission(new Double("0.00"));
+					t.setTypeAccount("passive");
 					t.setCreationDate(new Date());
 					t.setModificationDate(new Date());
+
 
 				}).onErrorReturn(dataWithdrawal).onErrorResume(e -> Mono.just(dataWithdrawal))
 				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
@@ -103,6 +113,13 @@ public class WithdrawalController {
 		Withdrawal withdrawal = new Withdrawal();
 		Mono<Withdrawal> withdrawalMono= Mono.just(withdrawal);
 		return withdrawalMono;
+	}
+
+	@GetMapping("/getCommissionsDeposit/{accountNumber}")
+	public Flux<Withdrawal> getCommissionsDeposit(@PathVariable("accountNumber") String accountNumber) {
+		Flux<Withdrawal> commissions = withdrawalService.findByCommission(accountNumber);
+		LOGGER.info("Registered commissions withdrawal of account number: "+accountNumber +"-" + commissions);
+		return commissions;
 	}
 
 
