@@ -51,7 +51,7 @@ public class WithdrawalController {
 	@PostMapping(value = "/saveWithdrawal/{commission}/{count}")
 	public Mono<Withdrawal> saveWithdrawal(@RequestBody Withdrawal dataWithdrawal,
 										   @PathVariable("commission") Double commission,
-										   @PathVariable("commission") Long count){
+										   @PathVariable("count") Long count){
 		Mono<Long> countMovementsMono = getCountDeposits(dataWithdrawal.getAccountNumber());
 		Long countMovementS =countMovementsMono.block();
 
@@ -75,8 +75,7 @@ public class WithdrawalController {
 	//Update withdrawal
 	@CircuitBreaker(name = "withdrawal", fallbackMethod = "fallBackGetWithdrawal")
 	@PutMapping("/updateWithdrawal/{numberTransaction}")
-	public Mono<Withdrawal> updateWithdrawal(@PathVariable("numberTransaction") String numberTransaction,
-											  @Valid @RequestBody Withdrawal dataWithdrawal) {
+	public Mono<Withdrawal> updateWithdrawal(@RequestBody Withdrawal dataWithdrawal,@PathVariable("numberTransaction") String numberTransaction) {
 		Mono.just(dataWithdrawal).doOnNext(t -> {
 
 					t.setWithdrawalNumber(numberTransaction);
